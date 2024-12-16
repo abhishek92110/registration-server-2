@@ -1,0 +1,132 @@
+[{
+  "_id": {
+    "$oid": "650eccf4b0894de2cc2f2924"
+  },
+  "Batch": "MT/2023/03/SH02/1",
+  "Trainer": "Shubham",
+  "TrainerID": "SH02",
+  "BatchTime": "05:30 PM - 06:30 PM",
+  "courseName": "Manual Testing",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6511203973a9e7054733ca5e"
+  },
+  "Batch": "AT/2023/10/SH01/1",
+  "Trainer": "Shivendra",
+  "TrainerID": "SH01",
+  "BatchTime": "09:00 AM - 10:30 AM",
+  "courseName": "Automation Testing",
+  "Days": "WeekEnd",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65266fce510f94940067d3f1"
+  },
+  "Batch": "AT/2023/02/SH01/1",
+  "Trainer": "Shivendra",
+  "TrainerID": "SH01",
+  "BatchTime": "12:30 PM - 01:30 PM",
+  "courseName": "Automation Testing",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6531283c2025b62e8f466c90"
+  },
+  "Batch": "FED/2023/10/FA01/1",
+  "Trainer": "farukh",
+  "TrainerID": "UC/FA/ST-01",
+  "BatchTime": "10:00 AM - 11:00 AM",
+  "courseName": "Front End Development",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6531286c2025b62e8f466c9a"
+  },
+  "Batch": "MFS/2023/10/FA01/1",
+  "Trainer": "farukh",
+  "TrainerID": "UC/FA/ST-01",
+  "BatchTime": "03:00 PM - 04:30 PM",
+  "courseName": "MERN Full Stack",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "653128a52025b62e8f466ca0"
+  },
+  "Batch": "MT/2023/09/UC/FA/ST-01/1",
+  "Trainer": "farukh",
+  "TrainerID": "UC/FA/ST-01",
+  "BatchTime": "10:30 AM - 11:30 AM",
+  "courseName": "Manual Testing",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6532259158ab1eb35ffad4f3"
+  },
+  "Batch": "MT/2023/02/UC/FA/ST-02/1",
+  "Trainer": "farukh",
+  "TrainerID": "UC/FA/ST-01",
+  "BatchTime": "08:30 AM - 09:30 AM",
+  "courseName": "Manual Testing",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "656429b03c31a8e946d6b80a"
+  },
+  "Batch": "ST/2023/11/SH02/1",
+  "Trainer": "Shubham",
+  "TrainerID": "SH02",
+  "BatchTime": "08:00 PM - 09:00 PM",
+  "courseName": "Software Testing",
+  "Days": "WeekDays",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6564919ad24a1782b171956d"
+  },
+  "Batch": "ST/2023/01/SH02/1",
+  "Trainer": "Shubham",
+  "TrainerID": "SH02",
+  "BatchTime": "10:30 AM - 12:30 PM",
+  "courseName": "Software Testing",
+  "Days": "WeekEnd",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6564931fd24a1782b171957c"
+  },
+  "Batch": "ST/2023/08/SH02/1",
+  "Trainer": "Shubham",
+  "TrainerID": "SH02",
+  "BatchTime": "12:30 PM - 02:30 PM",
+  "courseName": "Software Testing",
+  "Days": "WeekEnd",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "65649678d24a1782b17195d0"
+  },
+  "Batch": "ST/2023/11/SH01/1",
+  "Trainer": "Shivendra",
+  "TrainerID": "SH01",
+  "BatchTime": "08:30 AM - 09:30 AM",
+  "courseName": "Software Testing",
+  "Days": "WeekDays",
+  "__v": 0
+}]

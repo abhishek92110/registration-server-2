@@ -1,0 +1,617 @@
+const express = require("express");
+const mongoose = require('mongoose')
+const router = express.Router();
+const app = express();
+const users = require("../models/userSchema");
+const document = require("../models/Document");
+const uploads = require("../models/teachermodal");
+const uploaditem = require("../models/UploadedItem");
+const submititem = require("../models/Submitteditem");
+const messagemodel = require("../models/Messagemodel");
+const inst = require("../models/inst");
+const DataModel = require('../models/filterdata');
+const multer = require("multer");
+const bodyParser = require('body-parser');
+var jwt = require("jsonwebtoken");
+const fetchuser = require("../middleware/fetchuser");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+const fs = require("fs");
+const path = require('path');
+const baseUrl = "http://localhost:8000/files/";
+const sendmail = require('../controller/sendmail');
+const resetpassword = require("../controller/resetpassword");
+
+
+const jwt_secret = "uuu"
+
+// router.post("/register", async (req, res) => {
+//     const { Name, Number, Pname, Pnumber, JoiningDate, Course, Counselor, Fees, TrainerName, BatchStartDate, BatchTiming, BatchMode, Payment, Remark } = req.body;
+
+//     if (!Name || !Number || !Pname || !Pnumber || !JoiningDate || !Course || !Counselor || !Fees || !TrainerName || !BatchStartDate || !BatchTiming || !BatchMode || !Payment || !Remark) {
+//         res.status(422).json("Please fill in all the data");
+//         return;
+//     }
+
+//     try {
+//         const preuser = await users.findOne({ Name });
+//         console.log(preuser);
+
+//         if (preuser) {
+//             res.status(422).json("This user already exists");
+//         } else {
+//             const adduser = await users.create({
+//                 Name, Number, Pname, Pnumber, JoiningDate, Course, Counselor, Fees, TrainerName, BatchStartDate, BatchTiming, BatchMode, Payment, Remark
+//             });
+
+//             res.send(adduser);
+//             console.log(adduser);
+//         }
+//     } catch (error) {
+//         res.status(500).send('An error occurred');
+//     }
+// });
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/"); // Specify the destination folder for uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
+
+// Multer file filter configuration
+//   const fileFilter = (req, file, cb) => {
+//     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+//       cb(null, true);
+//     } else {
+//       cb(null, false);
+//     }
+//   };
+const upload = multer({ storage: storage });
+
+router.post("/register", upload.single("file"), async (req, res) => {
+    console.log('from regiter', req.body)
+    try {
+        const {
+            Name, email, Number, status, password, Pname, Pnumber, JoiningDate, Course, Counselor, Fees, TrainerName, BatchStartDate, BatchTiming, BatchMode, Payment, Remark, } = req.body;
+
+        const newUser = new users({ Name, email, Number, status, password, Pname, Pnumber, JoiningDate, Course, Counselor, Fees, TrainerName, BatchStartDate, BatchTiming, BatchMode, Payment, Remark, file: req.file.filename });
+
+        const savedUser = await newUser.save();
+        // res.status(200).json(savedUser);
+        sendmail(req, res)
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+
+
+
+// get userdata
+router.get("/getdata", async (req, res) => {
+    try {
+        const userdata = await users.find();
+        res.status(200).json(userdata);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+router.get("/scan", async (req, res) => {
+    const directoryPath = __basedir + "/uploads/";
+
+    fs.readdir(directoryPath, function (err, files) {
+        if (err) {
+            res.status(500).send({
+                message: "Unable to scan files!",
+            });
+        }
+
+        let fileInfos = [];
+
+        files.forEach((file) => {
+            const filePath = path.join(directoryPath, file);
+            const stats = fs.statSync(filePath);
+            const date = stats.mtime;
+            fileInfos.push({
+                file: file, // Change "name" to "file"
+                url: baseUrl + file,
+            });
+        });
+
+        res.status(200).send(fileInfos);
+    });
+});
+// get individual user
+router.get("/getuser/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const userindividual = await users.findById(id);
+        console.log("user individual =", userindividual);
+        res.status(200).json(userindividual);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+// update user data
+router.post("/updateuser/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const updateduser = await users.findByIdAndUpdate(id, req.body, {
+            new: true
+        });
+
+        console.log(updateduser);
+        res.status(200).json(updateduser);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+// delete student
+router.delete("/deleteuser/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedUser = await users.findByIdAndDelete(id);
+        console.log("id=", id, deletedUser);
+        res.status(200).json(deletedUser);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+// Installment
+router.get("/ins", async (req, res) => {
+    try {
+        const installments = await inst.find({});
+        res.send(installments);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+router.post("/add", async (req, res) => {
+    try {
+        const installment = await inst.create({
+            emi: req.body.emi,
+            inst1: req.body.inst1,
+            date1: req.body.date1,
+            inst2: req.body.inst2,
+            date2: req.body.date2,
+            inst3: req.body.inst3,
+            date3: req.body.date3,
+            inst4: req.body.inst4,
+            date4: req.body.date4
+        });
+        res.send(installment);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+
+// Document
+router.get("/document", async (req, res) => {
+    try {
+        const currentDate = new Date();
+        const docum = await document.find({});
+
+        const response = {
+            documents: docum,
+            date: currentDate
+        };
+        res.send(response);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+
+router.post("/assign", async (req, res) => {
+    try {
+        const docum = await document.create({
+            url: req.body.url,
+            assigurl: req.body.assigurl,
+            classurl: req.body.classurl,
+            trainer: req.body.trainer,
+            course: req.body.course,
+            batch: req.body.batch,
+        });
+        res.send(docum);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+
+//  Student-profile
+router.get("/studentpro", async (req, res) => {
+    try {
+        const student = await users.find({});
+        res.send(student);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+//Student-profile display in Trainer Component
+router.get("/pro", async (req, res) => {
+    try {
+        const trainers = await users.find({});
+        res.send(trainers);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+
+// Trainer profile
+router.get("/trainer", async (req, res) => {
+    try {
+        const trainers = await uploads.find({});
+        res.send(trainers);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+});
+
+//Add Trainer
+
+
+router.post("/Alltrainer", upload.single("file"), async (req, res) => {
+    console.log('from regiter', req.body)
+    try {
+        const {
+            TrainerName, trainernumber, traineremail, Company, Linkdin, Headline, address, bio, } = req.body;
+
+        const newUser = new uploads({ TrainerName, trainernumber, traineremail, Company, Linkdin, Headline, address, bio, file: req.file.filename });
+
+        const savedUser = await newUser.save();
+        // res.status(200).json(savedUser);
+        // sendmail(req,res)
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: "Something went wrong" });
+    }
+});
+
+
+//filter date wise data
+router.get('/filterByMonth', async (req, res) => {
+    const month = req.query.month;
+    try {
+        const filteredData = await DataModel.find({ JoiningDate: { $regex: month, $options: 'i' } }).exec();
+        res.json(filteredData);
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).send('Error executing query');
+    }
+});
+
+
+//Login router for student
+
+router.post("/login", async (req, res) => {
+    try {
+        const email = req.body.email;
+        const password = req.body.password;
+
+        const username = await users.findOne({ email: email, password: password }).lean();
+        console.log('status =', username.status, username)
+
+        if (username) {
+
+            if (username.status === "active") {
+                const data = {
+                    user: {
+                        id: username.id
+                    },
+                }
+
+                delete username.password;
+                console.log('trim user =', username)
+                const authtoken = await jwt.sign(data, jwt_secret)
+                res.send({ "status": "active", "authtoken": authtoken, "username": username })
+            }
+
+            else {
+                res.send({ "status": "deactive" })
+
+            }
+        }
+        else {
+            res.send({ "status": "false" })
+        }
+
+    } catch (error) {
+        res.status(404).send({ "invalid Password": error.message })
+    }
+})
+
+
+// Login router for Trainer
+
+router.post("/Tlogin", async (req, res) => {
+    try {
+        const Name = req.body.Name;
+        const Number = req.body.Number;
+
+        const username = await uploads.findOne({ TrainerName: Name });
+        // console.log(username);
+        console.log("TrainerName = ", (Name))
+        console.log("Trainernumber = ", (Number), username)
+
+        console.log('type of', typeof (username.trainernumber))
+        console.log('type of', typeof (Number))
+
+        if (username.trainernumber === parseInt(Number)) {
+            res.send({ "status": "true" })
+        } else {
+            res.send({ "status": "false" })
+        }
+
+    } catch (error) {
+        res.status(404).send("invalid Password")
+    }
+})
+
+
+router.post("/uploaditem", async (req, res) => {
+    const itemName = req.body.fileName;
+    const trainer = req.body.TrainerName;
+    const batch = req.body.batch;
+    const course = req.body.course;
+
+
+    console.log('item =', req.body.fileName, req.body.TrainerName, req.body)
+
+    try {
+        let data = await uploaditem.create({
+            itemName: itemName,
+            trainer: trainer,
+            batch: batch,
+            course: course
+        })
+
+        res.send({ "success": true, "data": data })
+    }
+
+    catch (error) {
+        res.send({ "error": error.message })
+    }
+
+})
+
+
+router.get('/fetchuploadeditems', async (req, res) => {
+
+    try {
+        let fetchedItem = await uploaditem.find({})
+
+        res.send({ "success": "true", "fetchData": fetchedItem })
+    }
+
+    catch (error) {
+        res.send(error.message)
+    }
+})
+
+
+router.post('/submititem', fetchuser, async (req, res) => {
+    const fileName = req.body.fileName;
+    const trainerName = req.body.trainerName;
+
+    try {
+        let studentData = await users.findOne({ _id: req.user.id });
+
+        let submitItem = await submititem.create({
+            itemName: fileName,
+            student: studentData.Name,
+            batch: studentData.BatchTiming,
+            course: studentData.Course,
+            trainerName: trainerName
+        });
+
+        res.send({ "success": true, "data": submitItem });
+    } catch (error) {
+        console.log("Error submitting item:", error);
+        res.status(500).send({ "success": false, "error": "Error submitting item" });
+    }
+});
+
+
+router.get('/fetchsubmititem', async (req, res) => {
+
+    try {
+        let fetchedItem = await submititem.find({})
+        console.log(fetchedItem)
+
+        res.send({ "success": "true", "fetchData": fetchedItem })
+    }
+
+    catch (error) {
+        res.send(error.message)
+    }
+})
+
+
+// --------- Send message By Admin to batch ------------
+
+router.post('/sendmessage', async (req, res) => {
+    const message = req.body.message;
+    const from = req.body.from;
+    const checkid = req.body.checkid;
+    console.log('check id =', checkid, message, req.body)
+
+    const data = {
+        user: {
+            id: checkid
+        },
+    }
+
+    console.log('data =', data.user)
+    const messageauthtoken = await jwt.sign(data, jwt_secret)
+
+
+    try {
+        let senddata = await messagemodel.create({
+            message,
+            from,
+            messageid: messageauthtoken
+        })
+
+        res.send(senddata)
+    }
+    catch (error) {
+        res.send(error.message)
+    }
+})
+
+// router.get('/receivemessage/:id', async (req, res) => {
+//     let {id} = req.params
+
+
+//     try {
+//         let fetchedItem = await messagemodel.find({})
+//         let message =[];
+//         fetchedItem.map((data,index)=>{
+
+//             const fetchData = jwt.verify(data.messageid, jwt_secret);
+//             console.log('message =',data.messageid)
+
+
+//             fetchData.user.id.filter(element=>{
+
+//                 if(id===element.id){
+
+//                     message.push(fetchedItem[index].message)
+//                 }
+//                 else{
+//                     false
+//                 }
+//             })
+
+//         })
+//        console.log('message =',message)
+
+
+//         res.send({ "success": "true", "message": "message" })
+//     }
+//     catch (error) {
+//         res.send(error.message)
+//     }
+// });
+
+
+router.get('/receivemessage/:id', async (req, res) => {
+    let { id } = req.params
+
+    try {
+        let fetchedItem = await messagemodel.find({})
+        let message = [];
+        fetchedItem.map((data, index) => {
+
+            const fetchData = jwt.verify(data.messageid, jwt_secret);
+
+
+            console.log("user id type =", typeof (fetchData.user.id), index)
+            fetchData.user.id.filter(element => {
+
+                if (id === element.id) {
+                    message.push(fetchedItem[index].message)
+                }
+                else {
+                    false
+                }
+            })
+        })
+        console.log('message =', message)
+
+
+        res.send({ "success": "true", "message": message })
+    }
+    catch (error) {
+        res.send(error.message)
+    }
+});
+
+router.post('/sendotp', async (req, res) => {
+    res.send('hello')
+})
+
+router.post('/sendmail', async (req, res) => {
+    console.log('from router =', req.body)
+    sendmail(req, res)
+})
+
+router.post('/resetpassword', async (req, res) => {
+    console.log('email =', req.body.email)
+    try {
+        const username = await users.findOne({ email: req.body.email });
+        console.log('email username =', username)
+        if (username) {
+            resetpassword(req, res)
+
+            const data = {
+                user: {
+                    email: username.email
+                },
+            }
+
+            const authtoken = await jwt.sign(data, jwt_secret)
+            res.send({ "send": "true", "resetlink": `http://localhost:3000/resetpassword?token=${authtoken}` })
+
+        }
+        else {
+            res.send({ "send": "false" })
+        }
+
+    }
+    catch (error) {
+        console.log('error =', error)
+        res.send({ "error": error })
+    }
+
+
+})
+
+router.post('/newpassword', fetchuser, async (req, res) => {
+    console.log("password =", req.body.newpassword)
+
+
+    try {
+        let user = await users.findOne({ email: req.user.email });
+
+        if (user) {
+            let userPassword = await users.updateOne({ email: req.user.email }, { $set: { password: req.body.newpassword } })
+
+            res.send({ "userpassword": userPassword })
+        }
+        else {
+            res.send({ "response": "no user exist" })
+        }
+    } catch (error) {
+        res.send({ "error": error.message })
+    }
+
+})
+
+module.exports = router;
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,36 @@
+[
+
+{
+  "_id": {
+    "$oid": "6572e73d928dfbc46cab1b90"
+  },
+  "Time": "3:21PM",
+  "Date": "08/Dec/2023",
+  "day": "08",
+  "month": "Dec",
+  "year": "2023",
+  "Trainer": "Sonal",
+  "TrainerId": "SO01",
+  "CounselorId": "UC2023/11-09",
+  "CounselorName": "Bipul Sir",
+  "Course": "Manual Testing",
+  "classLink": "https://meet.google.com/vyg-bjrv-pgh",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6572f13db20e6c1fb3bb65eb"
+  },
+  "Time": "5:04PM",
+  "Date": "08/Dec/2023",
+  "day": "08",
+  "month": "Dec",
+  "year": "2023",
+  "Trainer": "Shubham",
+  "TrainerId": "SH02",
+  "CounselorId": "UC2023/11-09",
+  "CounselorName": "Bipul Sir",
+  "Course": "Digital Marketing",
+  "classLink": "https://meet.google.com/vyg-bjrv-pgh",
+  "__v": 0
+}]

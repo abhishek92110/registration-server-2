@@ -1,0 +1,52 @@
+[
+
+{
+  "_id": {
+    "$oid": "6572f468b20e6c1fb3bb671b"
+  },
+  "Name": "sachin kumar",
+  "Number": "54353464653",
+  "Email": "mrtechnicals@gmail.com",
+  "Time": "3:21PM",
+  "Date": "08/Dec/2023",
+  "day": "08",
+  "month": "Dec",
+  "year": "2023",
+  "Trainer": "Sonal",
+  "TrainerId": "SO01",
+  "CounselorId": "UC2023/11-09",
+  "CounselorName": "Bipul Sir",
+  "Course": "Manual Testing",
+  "Background": "BSC2",
+  "classLink": "https://meet.google.com/vyg-bjrv-pgh",
+  "DemoId": {
+    "$oid": "6572e73d928dfbc46cab1b90"
+  },
+  "status": "process",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6572f4d0b20e6c1fb3bb6791"
+  },
+  "Name": "sunny",
+  "Number": "21211221312",
+  "Email": "mrtechnicals@gmail.com",
+  "Time": "5:04PM",
+  "Date": "08/Dec/2023",
+  "day": "08",
+  "month": "Dec",
+  "year": "2023",
+  "Trainer": "Shubham",
+  "TrainerId": "SH02",
+  "CounselorId": "UC2023/11-09",
+  "CounselorName": "Bipul Sir",
+  "Course": "Digital Marketing",
+  "Background": "BSC2",
+  "classLink": "https://meet.google.com/vyg-bjrv-pgh",
+  "DemoId": {
+    "$oid": "6572f13db20e6c1fb3bb65eb"
+  },
+  "status": "process",
+  "__v": 0
+}]

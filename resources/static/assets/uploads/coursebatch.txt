@@ -1,0 +1,45 @@
+if(monthAttendance.status==="filled"){
+      //('month attendance =',monthAttendance.monthAttendance)
+console.log('month attendance =',monthAttendance.monthAttendance)
+      
+      let checkDate = parseInt(monthAttendance.monthAttendance[0].date)
+ let tempMissingDays = missingDays
+      monthAttendance.monthAttendance.map((data,index)=>{
+if((parseInt(data.date) - checkDate)>0){
+  
+for(let i=0; i<(parseInt(data.date) - checkDate);i++){
+  let tempFulldate = data.fullDate.split('/')
+  tempFulldate[0] = checkDate;
+  data.fullDate = `${tempFulldate[0]}/${tempFulldate[1]}/${tempFulldate[2]}`
+  console.log('data date =',data.fullDate,(parseInt(data.date) - checkDate))
+  tempMissingDays.push(data.fullDate)
+  console.log('temp missing days =',tempMissingDays)
+  
+  checkDate = checkDate+1;
+}
+}
+else
+{let courseBatchStatus = false;
+        data.BatchCourse.map(element=>{
+          if(element.batchTime===currentStudent[0].BatchTiming && element.course===currentStudent[0].Course){
+            //('if cousrse batch',element.batchTime,data.date,currentStudent[0].BatchTiming, element.course,currentStudent[0].Course)
+            courseBatchStatus = true
+            
+          }
+        })
+        if(courseBatchStatus===false){
+          //('not match course batch',data.fullDate)
+          tempMissingDays.push(data.fullDate)
+          setMissingDays(tempMissingDays)
+
+        }}
+        checkDate = checkDate+1;
+        
+            })
+
+            setMissingDays(tempMissingDays)
+
+      
+
+      
+    }

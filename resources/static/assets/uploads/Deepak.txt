@@ -1,0 +1,89 @@
+
+ --MongoDB Path--
+C:\Program Files\MongoDB\Server\6.0\bin  
+
+//Thunder client
+
+
+//server listen 
+const app = express()
+app.listen(8000 , (res)=>{
+    console.log("App Listening on port 8000")
+})
+
+
+
+// Connection Mongodb using mongoose
+const mongoose = require('mongoose');
+
+async function dbConnect() {
+    mongoose.connect('mongodb://0.0.0.0:27017/Login')    //data base Name
+        .then(() => console.log("MongoDB Connected"))
+        .catch((err) => console.log("Mongo Error", err));
+}
+module.exports = dbConnect;
+
+
+
+// Schema
+const userSchema = new mongoose.Schema({
+    name:{
+        type:String,
+        require:true,
+    },
+    number:{
+        type:Number,
+        require:true,
+    },
+    course:{
+        type:String,
+        require:true,
+    },
+    trainer:{
+        type:String,
+    },
+    fee:{
+        type:Number,
+    },
+    time:{
+        type:Number,
+    },
+    day:{
+        type:Number, 
+    }
+})
+
+// Model
+const data = mongoose.model('students', {});    //collection name
+
+
+//Body-parser
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+
+// Parse URL-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+//Find the data in database using post method
+app.post("/login",async(req,res)=>{
+    try{
+        const name =req.body.name;
+        const email =req.body.email;
+        
+        const username = await data.findOne({name:name});
+        if(username.email === email){
+            res.status(201).render("/")       //Show screen
+        }else{
+            res.send("name are not matching")
+        }
+
+    }catch(error){
+        res.status(404).send("invalid Email")
+    }
+})
+
+
+
+Ecommers-https://github.com/meabhisingh/mernProjectEcommerce
