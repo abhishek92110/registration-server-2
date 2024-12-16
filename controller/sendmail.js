@@ -510,10 +510,10 @@ const sendmail = async (req, res) => {
         }, (error, info) => {
             if (error) {
                 console.error("Error sending email:", error);
-                res.status(500).send("An error occurred while sending the email.");
+                // res.status(500).send("An error occurred while sending the email.");
             } else {
                 console.log("Email sent:", info.response);
-                res.status(200).send("Email sent successfully.");
+                // res.status(200).send("Email sent successfully.");
             }
         });
     } catch (error) {
